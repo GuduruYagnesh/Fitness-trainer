@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <title>Arm Up Raise</title>
+    </head>
+    <body>
+        <h1>Arm Up Raise</h1>
+
+        <div class="counter_button">
+            <div class="button-container">
+                <button id="startBtn">Start Camera</button>
+                <button id="stopBtn">Stop Camera</button>
+                <button id="getreport">Get Report</button>
+            </div>
+            <div class="hline"><hr></div>
+            <div class="counter">
+
+                <p id  = "correctcounter"> Correct_counter: </p>
+                <p id  = "incorrectcounter"> Incorrect_counter: </p>
+            </div>
+        </div>
+
+
+        <!-- Display the graph using an img tag -->
+    <div id="graph-container">
+        {% block graph %}{% endblock %}
+    </div>
+
+        <!-- Instructions Card -->
+        <div class="exercise_data">
+            <div class="instructions">
+            <h2>Instructions</h2>
+            <ul>
+                <li>Stand with your feet shoulder-width apart and arms hanging by your sides.</li>
+                <li>Keep your core engaged and slowly raise your arms out to the sides until they are parallel to the ground.</li>
+                <li>Pause for a moment, then slowly lower your arms back down to the starting position.</li>
+                <li>Repeat for the desired number of repetitions.</li>
+                <li>Focus on keeping your shoulders down and your back straight throughout the movement.</li>
+            </ul>
+            <h2>Advantages</h2>
+            <ul>
+                <li>Strengthens the muscles in your shoulders, particularly the deltoids.</li>
+                <li>Improves shoulder stability and mobility.</li>
+                <li>Helps to correct posture by opening up the chest and pulling the shoulders back.</li>
+                <li>Can be done with or without weights to adjust difficulty.</li>
+                <li>Works multiple muscle groups simultaneously for efficient workouts.</li>
+                <li>Can be easily modified to target different areas of the shoulder.</li>
+            </ul>
+            </div>
+            <div style="height: 550px; border-left: 2px solid black;"></div>
+            <div class="focus_area">
+            <h2>Focus Area</h2>
+            <img src="/static/images/ArmUp.jpg">
+            </div>
+        </div>
+
+
+        <script>
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const reptbtn = document.getElementById('getreport');
+        
+            const correctcounter = document.getElementById('correctcounter');
+            const incorrectcounter = document.getElementById('incorrectcounter');
+            let correct = 0, incorrect = 0;
+
+            // Function to start camera
+            function startCamera() {
+                fetch('/start_camera_up_arm')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera started');
+                        } else {
+                            console.error('Failed to start camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error starting camera:', error);
+                    });
+            }
+
+            // Function to stop camera
+            function stopCamera() {
+                fetch('/stop_camera_up_arm')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera stopped');
+                        } else {
+                            console.error('Failed to stop camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error stopping camera:', error);
+                    });
+            }
+
+            function getReport(){
+
+                    fetch('/generate_graph_up_arm')
+                        .then(response => response.text())
+                            .then(data => {
+                        document.getElementById('graph-container').innerHTML = data;
+                    })
+                    .catch(error => console.error('Error fetching graph:', error));
+}
+
+            // Add event listeners to buttons
+            startBtn.addEventListener('click', startCamera);
+            stopBtn.addEventListener('click', stopCamera);
+            reptbtn.addEventListener('click',getReport);
+
+
+            // Function to update correct_counter display
+            function updateCorrect(newCorrect) {
+                if (typeof newCorrect === 'number') {
+                    correctcounter.innerText = `Correct Counter: ${newCorrect.toFixed(1)}`;
+                } else {
+                    console.error('Invalid correct_counter data received:', newCorrect);
+                }
+                // console.log('Received correct_counter value:', newCorrect);
+            }
+
+            // Function to update incorrect_counter display
+            function updateIncorrect(newIncorrect) {
+                if (typeof newIncorrect === 'number') {
+                    incorrectcounter.innerText = `Incorrect Counter: ${newIncorrect.toFixed(1)}`;
+                } else {
+                    console.error('Invalid incorrect_counter data received:', newIncorrect);
+                }
+                // console.log('Received Incorrect_counter value:', newIncorrect);
+            }
+
+
+            
+            // Function to handle server response with new angle
+            function handleDataResponse(data_up_arm) {
+
+                correct = data_up_arm.correct_counter_up_arm;
+                incorrect = data_up_arm.incorrect_counter_up_arm;
+                
+                updateCorrect(correct);
+                updateIncorrect(incorrect);
+            }
+
+
+            // Fetch multiple data points from server every 1000 ms
+            setInterval(() => {
+                fetch('/data_up_arm')
+                    .then(response => response.json())
+                    .then(data_up_arm => handleDataResponse(data_up_arm))
+                    .catch(error => console.error('Error:', error));
+            }, 1000);
+
+
+        </script>
+
+        
+    </body>
+</html>

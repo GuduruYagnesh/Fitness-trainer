@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webcam Interface</title>
+  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> -->
+  <style>
+    /* Add your CSS styles here */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        /* overflow-x: hidden; */
+        background: linear-gradient(to bottom, #2196F3, #E91E63);
+        background-size:cover;
+        background-attachment: fixed;
+        animation: animateBackground 20s linear infinite;
+    }
+
+    header {
+      background-color: #333333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .cards-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start; /* Align items to the start of the cross axis (top of the container) */
+      margin-top: 20px; /* Add margin to separate from header */
+    }
+
+    .top-row,
+    .bottom-row{
+      display: flex;
+      justify-content: space-around;
+    }
+    .card-link{
+      text-decoration: none;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 20px;
+      width: 200px;
+      height: 300px;
+      text-align: center;
+      display: inline-block;
+      color: #000;
+      z-index: 1;
+      transition: transform 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1 );
+    }
+    .card:hover {
+        transform: scale(1.10);
+    }
+
+    .card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+    }
+    
+    /* .background-animation {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(to bottom, #2196F3, #E91E63);
+        background-size:cover;
+        background-attachment: fixed;
+        animation: animateBackground 20s linear infinite;
+    } */
+    @keyframes animateBackground {
+        0% {
+            background-position: 0% 50%;
+        }
+        100% {
+            background-position: 100% 50%;
+        }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>AI FITNESS TRAINER</h1>
+  </header>
+
+  <div class="cards-wrapper">
+    <!-- <div class="background-animation"></div> -->
+      <div class="card-container">
+        <div class = "top-row">
+          <!-- first row -->
+          <!-- for card 1  -->
+          <a href="/arm_curl_ex" class="card-link" >
+            <div class="card">
+              <img src="/static/images/arm_curl.jpg" alt="Card 1 Image">
+              <h2>Left Arm Curl</h2>
+              <p>The arm curl exercise targets the biceps muscles by flexing the elbow joint while holding a weight.</p>
+            </div>
+          </a>
+
+          <!-- for card 2 -->
+          <!-- Repeat the above div for three more cards -->
+          <a href="/side_arm_ex" class="card-link">
+            <div class="card">
+              <img src="/static/images/side_arm_raise.webp" alt="Card 2 Image">
+              <h2>Side Arm Raise</h2>
+              <p>The side arm raise exercise targets the shoulder muscles by lifting the arms laterally to shoulder height or slightly above, with palms facing downwards or forwards.</p>
+            </div>
+          </a>
+          
+          <!-- for card 3 -->
+          <!-- Repeat the above div for three more cards -->
+          <a href="/up_arm_ex" class="card-link">
+            <div class="card">
+              <img src="/static/images/arm_up_raise.webp" alt="Card 3 Image">
+              <h2>Arm Up Raise</h2>
+              <p>The arm up raise exercise targets the deltoids by lifting the arms vertically overhead from a starting position at the sides of the body.</p>
+            </div>
+          </a>
+
+          <!-- for card 4 -->
+          <!-- Repeat the above div for three more cards -->
+          <a href="/wall_sit_ex" class="card-link">
+            <div class="card">
+              <img src="/static/images/wall_sit.jpg" alt="Card 4 Image">
+              <h2>Wall Sit</h2>
+              <p>The wall sit exercise involves holding a seated position with the back against a wall, targeting the quadriceps and glutes.</p>
+            </div>
+          </a>
+        </div>
+
+        <div class = "bottom-row">
+            
+          <a href="/plank_ex" class="card-link">
+            <div class="card">
+              <img src="/static/images/plank.jpeg" alt="Card 5 Image">
+              <h2>Plank</h2>
+              <p>The Plank involves holding a seated position with the back against a wall, targeting the quadriceps and glutes.</p> 
+            </div>
+          </a>
+
+          <a href="/leg_raise_ex" class="card-link">
+            <div class="card">
+              <img src="/static/images/legraise.jpeg" alt="Card 6 Image">
+              <h2>Leg Raise</h2>
+              <p>The leg raise exercise holding a seated position with the back against a wall, targeting the quadriceps and glutes.</p>
+            </div>
+          </a>
+
+          <a href="/right_arm_curl_ex" class="card-link">
+            <div class="card">
+              <img src="/static/images/rightcurl.jpeg" alt="Card 7 Image">
+              <h2>Right Arm Curl</h2>
+              <p>The arm curl exercise targets the biceps muscles by flexing the elbow joint while holding a weight.</p>
+            </div>
+          </a>
+            
+          <!-- <a href="/squat_ex" class="card-link">
+            <div class="card">
+              <img src="/static/images/squat.jpeg" alt="Card 8 Image">
+              <h2>Squats</h2>
+              <p>The leg raise exercise holding a seated position with the back against a wall, targeting the quadriceps and glutes.</p> -->
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <title>Left Arm Curl</title>
+    </head>
+    <body>
+        <h1>Left Arm Curl</h1>
+
+        <div class="counter_button">
+            <div class="button-container">
+                <button id="startBtn">Start Camera</button>
+                <button id="stopBtn">Stop Camera</button>
+                <button id="getreport">Get Report</button>
+            </div>
+            <div class="hline"><hr></div>
+            <div class="counter">
+
+                <p id  = "correctcounter"> Correct_counter: </p>
+                <p id  = "incorrectcounter"> Incorrect_counter: </p>
+            </div>
+        </div>
+        <!-- Display the graph using an img tag -->
+    <div id="graph-container">
+        {% block graph %}{% endblock %}
+    </div>
+    
+        <!-- Instructions Card -->
+        <div class="exercise_data">
+            <div class="instructions">
+                <h2>Instructions</h2>
+                <ul>
+                <li>Hold a dumbbell with your palm facing upward.</li>
+                <li>Slowly curl the weight up by bending your elbow.</li>
+                <li>Keep your elbow close to your body.</li>
+                <li>Lower the weight slowly to the starting position.</li>
+                <li>Focus on feeling tension in the muscles in the front of your upper arm.</li>
+                <li>Repeat for desired number of repetitions.</li>
+                </ul>
+                <h2>Advantages</h2>
+                <ul>
+                <li>Strengthens biceps and improves arm strength.</li>
+                <li>Effective for building muscle mass and definition.</li>
+                <li>Helps improve grip strength.</li>
+                <li>Can be easily incorporated into various workout routines.</li>
+                <li>Provides functional strength for daily activities.</li>
+                <li>Improves overall upper body aesthetics.</li>
+                </ul>
+            </div>
+            <div style="height: 500px; border-left: 2px solid black;"></div>
+        
+            <div class="focus_area">
+                <h2>Focus Area</h2>
+                <img src="/static/images/ArmCurl.jpg">
+            </div>
+        </div>
+    
+        <script>
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const reptbtn = document.getElementById('getreport');
+
+            const correctcounter = document.getElementById('correctcounter');
+            const incorrectcounter = document.getElementById('incorrectcounter');
+            let correct = 0, incorrect = 0;
+
+
+            // Function to start camera
+            function startCamera() {
+                fetch('/start_camera_arm_curl')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera started');
+                        } else {
+                            console.error('Failed to start camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error starting camera:', error);
+                    });
+            }
+
+            // Function to stop camera
+            function stopCamera() {
+                fetch('/stop_camera_armcurl')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera stopped');
+                        } else {
+                            console.error('Failed to stop camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error stopping camera:', error);
+                    });
+            }
+
+            function getReport(){
+
+                    fetch('/generate_graph_arm_curl')
+                        .then(response => response.text())
+                            .then(data => {
+                        document.getElementById('graph-container').innerHTML = data;
+                    })
+                    .catch(error => console.error('Error fetching graph:', error));
+}
+
+            
+            // Add event listeners to buttons
+            startBtn.addEventListener('click', startCamera);
+            stopBtn.addEventListener('click', stopCamera);
+            reptbtn.addEventListener('click',getReport);
+
+
+            // Function to update correct_counter display
+            function updateCorrect(newCorrect) {
+                if (typeof newCorrect === 'number') {
+                    correctcounter.innerText = `Correct Counter: ${newCorrect.toFixed(1)}`;
+                } else {
+                    console.error('Invalid correct_counter data received:', newCorrect);
+                }
+                console.log('Received correct_counter value:', newCorrect);
+            }
+
+            // Function to update incorrect_counter display
+            function updateIncorrect(newIncorrect) {
+                if (typeof newIncorrect === 'number') {
+                    incorrectcounter.innerText = `Incorrect Counter: ${newIncorrect.toFixed(1)}`;
+                } else {
+                    console.error('Invalid incorrect_counter data received:', newIncorrect);
+                }
+                console.log('Received Incorrect_counter value:', newIncorrect);
+            }
+
+            
+            // Function to handle server response with new angle
+            function handleDataResponse(data) {
+                correct = data.correct_counter;
+                incorrect = data.incorrect_counter;
+
+                updateCorrect(correct);
+                updateIncorrect(incorrect);
+            }
+
+
+            // Fetch multiple data points from server every 1000 ms
+            setInterval(() => {
+                fetch('/data')
+                    .then(response => response.json())
+                    .then(data => handleDataResponse(data))
+                    .catch(error => console.error('Error:', error));
+            }, 1000);
+
+            
+            
+
+        </script>
+    </body>
+</html>

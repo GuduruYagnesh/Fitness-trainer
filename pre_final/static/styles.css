@@ -1,0 +1,200 @@
+/* styles.css */
+body {
+    font-family:'Times New Roman', Times, serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.cards-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start; /* Align items to the start of the cross axis (top of the container) */
+    margin-top: 20px; /* Add margin to separate from header */
+}
+
+.card {
+    width: 300px;
+    margin: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+.card p {
+    margin-bottom: 0;
+}
+
+
+/* Execise css */
+
+/* Button styling */
+.button-container {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50; /* Green */
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0 10px; /* Add margin to separate buttons */
+  }
+
+  button:hover {
+    background-color: hsl(315, 40%, 45%); /* Darker green */
+  }
+
+  button:focus {
+    outline: none; /* Remove outline when focused */
+  }
+
+  /* Image styling */
+  #videoElement {
+    display: none; /* Hide the video initially */
+  }
+
+  /* Heading and paragraph styling */
+  h1 {
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Times New Roman', Times, serif; /* Use a beautiful font */
+    color: hsl(0, 0%, 100%); /* Text color */
+    position: relative; /* Relative positioning for animation */
+    overflow: hidden; /* Hide overflowing content */
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  /* exercise data counter values */
+  .counter{
+    width: 90%;
+    font-size: 24px;
+   
+  }
+
+  #correctcounter{
+    font-size: 22px;
+  }
+
+  #incorrectcounter{
+    font-size: 22px;
+    justify-content: flex-end;
+  }
+
+  .counter_button{
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    margin: 20px auto;
+  }
+
+
+
+  /* Card styling */
+  .exercise_data {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    width: 90%;
+    margin: 20px auto;
+  }
+
+  .exercise_data h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .exercise_data ul {
+    list-style-type: none; /* Remove default bullets */
+    padding-left: 20px; /* Add left padding to align text */
+  }
+
+  .exercise_data ul li {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .exercise_data ul li:before {
+    content: '\2192'; /* Unicode character for right arrow */
+    position: absolute;
+    left: -20px; /* Adjust position of arrow */
+  }
+
+  .exercise_data img{
+    height: 400px;
+    width: 400px;
+  }
+
+  /* Animation for heading background */
+  @keyframes animateBackground {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
+
+  h1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%; /* Start gradient animation from left side */
+    width: 200%; /* Extend width to cover entire header */
+    height: 100%;
+    background: linear-gradient(to right, #ff8a00, #e52e71, #1e90ff, #3e5151);
+    background-size: 400% 400%;
+    animation: animateBackground 10s linear infinite;
+    z-index: -1;
+  }
+  .instructions, .focus_area {
+    flex: 1;
+    
+  }
+  .instructions{
+    padding-left: 50px;
+  }
+  .focus_area{
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 170px;
+    padding-top: 50px;
+  }

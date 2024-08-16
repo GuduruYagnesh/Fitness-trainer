@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <title>Side Arm Raise</title>
+      </head>
+    <body>
+        <h1>Side Arm Raise</h1>
+
+
+        <div class="counter_button">
+            <div class="button-container">
+                <button id="startBtn">Start Camera</button>
+                <button id="stopBtn">Stop Camera</button>
+                <button id="getreport">Get Report</button>
+            </div>
+            <div class="hline"><hr></div>
+            <div class="counter">
+
+                <p id  = "correctcounter"> Correct_counter: </p>
+                <p id  = "incorrectcounter"> Incorrect_counter: </p>
+            </div>
+        </div>
+
+
+        <!-- Display the graph using an img tag -->
+    <div id="graph-container">
+        {% block graph %}{% endblock %}
+    </div>
+
+
+      
+        <!-- Instructions Card -->
+        <div class="exercise_data">
+          <div class="instructions">
+           <h2>Instructions</h2>
+            <ul>
+              <li>Stand with your feet shoulder-width apart.</li>
+              <li>Raise your arms to the sides at shoulder height,then put them down.</li>
+              <li>Reapeat the exercise.</li>
+              <li>Keep your arms straight during the exercise.</li>
+            </ul>
+            <h2>Advantages</h2>
+          <ul>
+            <li>Strengthens the deltoid muscles in your shoulders.</li>
+            <li>Improves shoulder stability and mobility.</li>
+            <li>Helps correct muscle imbalances in the upper body.</li>
+            <li>Can be done with light weights for toning or heavier weights for muscle building.</li>
+          </ul>
+          </div>
+          <div style="height: 500px; border-left: 2px solid black;"></div>
+          <div class="focus_area">
+            <h2>Focus Area</h2>
+            <img src="/static/images/SideArm.jpg">
+          </div>
+        </div>
+      
+
+
+        <script>
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const reptbtn = document.getElementById('getreport');
+        
+            const correctcounter = document.getElementById('correctcounter');
+            const incorrectcounter = document.getElementById('incorrectcounter');
+            let angle = 0, correct = 0, incorrect = 0;
+
+            // Function to update angle display
+            // function updateAngle(newAngle) {
+            //     if (typeof newAngle === 'number') {
+            //         angleDisplay.innerText = `Angle: ${newAngle.toFixed(2)}°`;
+            //     } else {
+            //         console.error('Invalid angle data received:', newAngle);
+            //     }
+            // }
+
+
+            // Function to start camera
+            function startCamera() {
+                fetch('/start_camera_side_arm')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera started');
+                        } else {
+                            console.error('Failed to start camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error starting camera:', error);
+                    });
+            }
+
+            // Function to stop camera
+            function stopCamera() {
+                fetch('/stop_camera_side_arm')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera stopped');
+                        } else {
+                            console.error('Failed to stop camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error stopping camera:', error);
+                    });
+            }
+
+
+            // Function to update correct_counter display
+            function updateCorrect(newCorrect) {
+                if (typeof newCorrect === 'number') {
+                    correctcounter.innerText = `Correct Counter: ${newCorrect.toFixed(1)}`;
+                } else {
+                    console.error('Invalid correct_counter data received:', newCorrect);
+                }
+                console.log('Received correct_counter value:', newCorrect);
+            }
+
+            // Function to update incorrect_counter display
+            function updateIncorrect(newIncorrect) {
+                if (typeof newIncorrect === 'number') {
+                    incorrectcounter.innerText = `Incorrect Counter: ${newIncorrect.toFixed(1)}`;
+                } else {
+                    console.error('Invalid incorrect_counter data received:', newIncorrect);
+                }
+                console.log('Received Incorrect_counter value:', newIncorrect);
+            }
+
+
+            
+            // Function to handle server response with new angle
+            function handleDataResponse(data_side_arm) {
+                correct = data_side_arm.correct_counter_side_arm;
+                incorrect = data_side_arm.incorrect_counter_side_arm;
+                
+                updateCorrect(correct);
+                updateIncorrect(incorrect);
+            }
+
+
+            function getReport(){
+
+                fetch('/generate_graph_side_arm')
+                    .then(response => response.text())
+                        .then(data => {
+                    document.getElementById('graph-container').innerHTML = data;
+                })
+                .catch(error => console.error('Error fetching graph:', error));
+}
+
+            // Add event listeners to buttons
+            startBtn.addEventListener('click', startCamera);
+            stopBtn.addEventListener('click', stopCamera);
+            reptbtn.addEventListener('click',getReport);
+
+            // Fetch multiple data points from server every 1000 ms
+            setInterval(() => {
+                fetch('/data_side_arm')
+                    .then(response => response.json())
+                    .then(data_side_arm => handleDataResponse(data_side_arm))
+                    .catch(error => console.error('Error:', error));
+            }, 1000);
+
+
+        </script>
+    </body>
+</html>

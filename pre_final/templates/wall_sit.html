@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <title>Wall Sit</title>
+    </head>
+    <body>
+        <h1>Wall Sit</h1>
+
+        <div class="counter_button">
+            <div class="button-container">
+                <button id="startBtn">Start Camera</button>
+                <button id="stopBtn">Stop Camera</button>
+                <button id="getreport">Get Report</button>
+            </div>
+            <div class="hline"><hr></div>
+            <div class="counter">
+
+                <p id  = "elapsedTimeCorrect"> Correct_counter: </p>
+                <p id  = "elapsedTimeIncorrect"> Incorrect_counter: </p>
+            </div>
+        </div>
+
+        <!-- Display the graph using an img tag -->
+    <div id="graph-container">
+        {% block graph %}{% endblock %}
+    </div>
+
+        <!-- Instructions Card -->
+        <div class="exercise_data">
+            <div class="instructions">
+            <h2>Instructions</h2>
+            <ul>
+                <li>Stand with your back against a wall and your feet about shoulder-width apart.</li>
+                <li>Lower your body until your thighs are parallel to the ground, as if you were sitting in an imaginary chair.</li>
+                <li>Keep your back straight against the wall and your knees directly above your ankles.</li>
+                <li>Hold this position for as long as you can while keeping good form.</li>
+                <li>Push through your heels to stand back up and repeat the exercise.</li>
+            </ul>
+            <h2>Advantages</h2>
+            <ul>
+                <li>Strengthens the quadriceps, hamstrings, and glutes.</li>
+                <li>Improves lower body endurance and stability.</li>
+                <li>Helps to build muscular endurance without the need for equipment.</li>
+                <li>Can be easily modified to increase or decrease intensity.</li>
+                <li>Great for improving posture and preventing lower back pain.</li>
+            </ul>
+            </div>
+            <div style="height: 500px; border-left: 2px solid black;"></div>
+            <div class="focus_area">
+            <h2>Focus Area</h2>
+            <img src="/static/images/WallSit.jpg">
+            </div>
+        </div>
+
+        <script>
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const reptbtn = document.getElementById('getreport');
+            const elapsedTimeCorrect = document.getElementById('elapsedTimeCorrect');
+            const elapsedTimeIncorrect = document.getElementById('elapsedTimeIncorrect');
+            let elapsedtime = 0;
+
+
+            // Function to start camera
+            function startCamera() {
+                fetch('/start_camera_wall_sit')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera started');
+                        } else {
+                            console.error('Failed to start camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error starting camera:', error);
+                    });
+            }
+
+            // Function to stop camera
+            function stopCamera() {
+                fetch('/stop_camera_wall_sit')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera stopped');
+                        } else {
+                            console.error('Failed to stop camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error stopping camera:', error);
+                    });
+            }
+            function getReport(){
+
+                    fetch('/generate_graph_wall_sit')
+                        .then(response => response.text())
+                            .then(data => {
+                        document.getElementById('graph-container').innerHTML = data;
+                    })
+                    .catch(error => console.error('Error fetching graph:', error));
+}
+            
+            // Add event listeners to buttons
+            startBtn.addEventListener('click', startCamera);
+            stopBtn.addEventListener('click', stopCamera);
+            reptbtn.addEventListener('click',getReport);
+
+            // Function to update angle display
+            function updateElapsedTimeCorrect(newelapsedtimecorrect) {
+                if (typeof newelapsedtimecorrect === 'number') {
+                    elapsedTimeCorrect.innerText = `Elapsed Time Correct: ${newelapsedtimecorrect.toFixed(2)}`;
+                } else {
+                    console.error('Invalid angle data received:', newelapsedtimecorrect);
+                }
+            }
+
+            // Function to update angle display
+            function updateElapsedTimeIncorrect(newelapsedtimeincorrect) {
+                if (typeof newelapsedtimeincorrect === 'number') {
+                    elapsedTimeIncorrect.innerText = `Elapsed Time Incorrect: ${newelapsedtimeincorrect.toFixed(2)}`;
+                } else {
+                    console.error('Invalid angle data received:', newelapsedtimeincorrect);
+                }
+            }
+
+            
+            // Function to handle server response with new angle
+            function handleDataResponse(data_wall_sit) {
+                elapsedtimecorrect = data_wall_sit.elapsed_time_correct_wall_sit;
+                elapsedtimeincorrect = data_wall_sit.elapsed_time_incorrect_wall_sit;
+
+                updateElapsedTimeCorrect(elapsedtimecorrect);
+                updateElapsedTimeIncorrect(elapsedtimeincorrect)
+            }
+
+
+            // Fetch multiple data points from server every 1000 ms
+            setInterval(() => {
+                fetch('/data_wall_sit')
+                    .then(response => response.json())
+                    .then(data_wall_sit => handleDataResponse(data_wall_sit))
+                    .catch(error => console.error('Error:', error));
+            }, 1000);
+
+            
+            
+
+        </script>
+    </body>
+</html>

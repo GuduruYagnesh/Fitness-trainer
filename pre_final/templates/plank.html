@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <title>Plank</title>
+    </head>
+    <body>
+        <h1>Plank</h1>
+        <div class="counter_button">
+            <div class="button-container">
+                <button id="startBtn">Start Camera</button>
+                <button id="stopBtn">Stop Camera</button>
+                <button id="getreport">Get Report</button>
+            </div>
+            <div class="hline"><hr></div>
+            <div class="counter">
+
+                <p id  = "elapsedTimeCorrect"> Correct_counter: </p>
+                <p id  = "elapsedTimeIncorrect"> Incorrect_counter: </p>
+            </div>
+        </div>
+
+          <!-- Display the graph using an img tag -->
+    <div id="graph-container">
+        {% block graph %}{% endblock %}
+    </div>
+
+        <!-- Instructions Card -->
+        <div class="exercise_data">
+            <div class="instructions">
+            <h2>Instructions</h2>
+            <ul>
+                <li>Start by getting into a push-up position on the floor.</li>
+                <li>Bend your elbows and rest your weight on your forearms instead of your hands.</li>
+                <li>Your body should form a straight line from head to heels.</li>
+                <li>Engage your core muscles and hold this position for the desired duration.</li>
+                <li>Breathe deeply and evenly throughout the exercise.</li>
+            </ul>
+            <h2>Advantages</h2>
+            <ul>
+                <li>Strengthens the core muscles, including the abs, back, and shoulders.</li>
+                <li>Improves overall core stability and balance.</li>
+                <li>Can help reduce back pain by improving posture and spine alignment.</li>
+                <li>Requires minimal space and equipment, making it easy to do at home.</li>
+                <li>Can be modified to increase or decrease intensity based on fitness level.</li>
+            </ul>
+            </div>
+            <div style="height: 500px; border-left: 2px solid black;"></div>
+            <div class="focus_area">
+            <h2>Focus Area</h2>
+            <img src="/static/images/Plank.jpg">
+            </div>
+        </div>
+
+    
+        <script>
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const reptbtn = document.getElementById('getreport');
+            const elapsedTimeCorrect = document.getElementById('elapsedTimeCorrect');
+            const elapsedTimeIncorrect = document.getElementById('elapsedTimeIncorrect');
+            let elapsedtime = 0;
+
+
+            // Function to start camera
+            function startCamera() {
+                fetch('/start_camera_plank')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera started');
+                        } else {
+                            console.error('Failed to start camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error starting camera:', error);
+                    });
+            }
+
+            // Function to stop camera
+            function stopCamera() {
+                fetch('/stop_camera_plank')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera stopped');
+                        } else {
+                            console.error('Failed to stop camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error stopping camera:', error);
+                    });
+            }
+            function getReport(){
+
+                    fetch('/generate_graph_plank')
+                        .then(response => response.text())
+                            .then(data => {
+                        document.getElementById('graph-container').innerHTML = data;
+                    })
+                    .catch(error => console.error('Error fetching graph:', error));
+}
+
+            
+            // Add event listeners to buttons
+            startBtn.addEventListener('click', startCamera);
+            stopBtn.addEventListener('click', stopCamera);
+            reptbtn.addEventListener('click',getReport);
+
+            // Function to update angle display
+            function updateElapsedTimeCorrect(newelapsedtimecorrect) {
+                if (typeof newelapsedtimecorrect === 'number') {
+                    elapsedTimeCorrect.innerText = `Elapsed Time Correct: ${newelapsedtimecorrect.toFixed(2)}`;
+                } else {
+                    console.error('Invalid angle data received:', newelapsedtimecorrect);
+                }
+            }
+
+            // Function to update angle display
+            function updateElapsedTimeIncorrect(newelapsedtimeincorrect) {
+                if (typeof newelapsedtimeincorrect === 'number') {
+                    elapsedTimeIncorrect.innerText = `Elapsed Time Incorrect: ${newelapsedtimeincorrect.toFixed(2)}`;
+                } else {
+                    console.error('Invalid angle data received:', newelapsedtimeincorrect);
+                }
+            }
+
+            
+            // Function to handle server response with new angle
+            function handleDataResponse(data_plank) {
+                elapsedtimecorrect = data_plank.elapsed_time_correct_plank;
+                elapsedtimeincorrect = data_plank.elapsed_time_incorrect_plank;
+
+                updateElapsedTimeCorrect(elapsedtimecorrect);
+                updateElapsedTimeIncorrect(elapsedtimeincorrect)
+            }
+
+
+            // Fetch multiple data points from server every 1000 ms
+            setInterval(() => {
+                fetch('/data_plank')
+                    .then(response => response.json())
+                    .then(data_plank => handleDataResponse(data_plank))
+                    .catch(error => console.error('Error:', error));
+            }, 1000);
+
+        </script>
+    </body>
+</html>

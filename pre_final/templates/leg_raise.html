@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <title>Leg Raise</title>
+    </head>
+    <body>
+        <h1>Leg Raise</h1>
+
+        <div class="counter_button">
+            <div class="button-container">
+                <button id="startBtn">Start Camera</button>
+                <button id="stopBtn">Stop Camera</button>
+                <button id="getreport">Get Report</button>
+            </div>
+            <div class="hline"><hr></div>
+            <div class="counter">
+
+                <p id  = "correctcounter"> Correct_counter: </p>
+                <p id  = "incorrectcounter"> Incorrect_counter: </p>
+            </div>
+        </div>
+
+        <!-- Display the graph using an img tag -->
+    <div id="graph-container">
+        {% block graph %}{% endblock %}
+    </div>
+
+        <!-- Instructions Card -->
+        <div class="exercise_data">
+            <div class="instructions">
+            <h2>Instructions</h2>
+            <ul>
+                <li>Start by lying flat on your back on a mat or bench.</li>
+                <li>Keep your arms by your sides and your palms facing down.</li>
+                <li>Engage your core and lift your legs upward until they are perpendicular to the ground.</li>
+                <li>Slowly lower your legs back down to the starting position without letting them touch the ground.</li>
+                <li>Repeat for the desired number of repetitions.</li>
+                <li>Focus on maintaining control and stability throughout the movement.</li>
+            </ul>
+            <h2>Advantages</h2>
+            <ul>
+                <li>Targets the lower abdominal muscles for a stronger core.</li>
+                <li>Improves hip flexibility and mobility.</li>
+                <li>Helps to prevent lower back pain by strengthening the core muscles.</li>
+                <li>Can be modified to increase or decrease difficulty by adjusting leg height or adding ankle weights.</li>
+                <li>Provides a great workout for the entire abdominal region.</li>
+                <li>Can be done virtually anywhere with no equipment necessary.</li>
+            </ul>
+            </div>
+            <div style="height: 580px; border-left: 2px solid black;"></div>
+            <div class="focus_area">
+            <h2>Focus Area</h2>
+            <img src="/static/images/LegRaise.jpg">
+            </div>
+        </div>
+       
+        <script>
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const reptbtn = document.getElementById('getreport');
+        
+            const correctcounter = document.getElementById('correctcounter');
+            const incorrectcounter = document.getElementById('incorrectcounter');
+            let correct = 0, incorrect = 0;
+
+            // Function to start camera
+            function startCamera() {
+                fetch('/start_camera_leg_raise')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera started');
+                        } else {
+                            console.error('Failed to start camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error starting camera:', error);
+                    });
+            }
+
+            // Function to stop camera
+            function stopCamera() {
+                fetch('/stop_camera_leg_raise')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Camera stopped');
+                        } else {
+                            console.error('Failed to stop camera:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error stopping camera:', error);
+                    });
+            }
+
+            function getReport(){
+
+                fetch('/generate_graph_leg_raise')
+                    .then(response => response.text())
+                        .then(data => {
+                    document.getElementById('graph-container').innerHTML = data;
+                })
+                .catch(error => console.error('Error fetching graph:', error));
+}
+
+            // Add event listeners to buttons
+            startBtn.addEventListener('click', startCamera);
+            stopBtn.addEventListener('click', stopCamera);
+            reptbtn.addEventListener('click',getReport);
+
+
+            // Function to update correct_counter display
+            function updateCorrect(newCorrect) {
+                if (typeof newCorrect === 'number') {
+                    correctcounter.innerText = `Correct Counter: ${newCorrect.toFixed(1)}`;
+                } else {
+                    console.error('Invalid correct_counter data received:', newCorrect);
+                }
+                // console.log('Received correct_counter value:', newCorrect);
+            }
+
+            // Function to update incorrect_counter display
+            function updateIncorrect(newIncorrect) {
+                if (typeof newIncorrect === 'number') {
+                    incorrectcounter.innerText = `Incorrect Counter: ${newIncorrect.toFixed(1)}`;
+                } else {
+                    console.error('Invalid incorrect_counter data received:', newIncorrect);
+                }
+                // console.log('Received Incorrect_counter value:', newIncorrect);
+            }
+
+
+            
+            // Function to handle server response with new angle
+            function handleDataResponse(data_leg_raise) {
+
+                correct = data_leg_raise.correct_counter_leg_raise;
+                incorrect = data_leg_raise.incorrect_counter_leg_raise;
+                
+                updateCorrect(correct);
+                updateIncorrect(incorrect);
+            }
+
+
+            // Fetch multiple data points from server every 1000 ms
+            setInterval(() => {
+                fetch('/data_leg_raise')
+                    .then(response => response.json())
+                    .then(data_leg_raise => handleDataResponse(data_leg_raise))
+                    .catch(error => console.error('Error:', error));
+            }, 1000);
+
+
+        </script>
+
+    </body>
+</html>
